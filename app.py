@@ -9,8 +9,8 @@ st.write("Простой способ честно распределить до
 # Основной блок ввода данных
 with st.container():
     st.subheader("Основные данные")
-    zp = st.number_input("Общая сумма от компании (₽)", min_value=0.0, value=50000.0, step=500.0)
-    kol_workouts = st.number_input("Кол-во тренировок в месяц (план на одного)", min_value=1, value=20, step=1)
+    zp = st.number_input("Общая зарплата выдаваемая на обоих тренеров (₽)", min_value=0.0, value=50000.0, step=500.0)
+    kol_workouts = st.number_input("Кол-во тренировок в месяц ", min_value=1, value=20, step=1)
 
 st.divider()
 
