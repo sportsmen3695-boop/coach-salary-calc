@@ -1,0 +1,52 @@
+import streamlit as st
+
+# Настройка страницы (иконка и название во вкладке браузера)
+st.set_page_config(page_title="Калькулятор ЗП", page_icon="⚖️")
+
+st.title("⚖️ Расчет зарплаты тренеров")
+st.write("Простой способ честно распределить доход с учетом замен.")
+
+# Основной блок ввода данных
+with st.container():
+    st.subheader("Основные данные")
+    zp = st.number_input("Общая сумма от компании (₽)", min_value=0.0, value=50000.0, step=500.0)
+    kol_workouts = st.number_input("Кол-во тренировок в месяц (план на одного)", min_value=1, value=20, step=1)
+
+st.divider()
+
+# Блок пропусков
+st.subheader("Пропуски и замены")
+col1, col2 = st.columns(2)
+
+with col1:
+    k_A = st.number_input("Пропуски Ахмада", min_value=0, value=0, step=1)
+with col2:
+    k_V = st.number_input("Пропуски Владимира", min_value=0, value=0, step=1)
+
+# Логика расчета
+if st.button("Рассчитать итог", type="primary"):
+    zp_half = zp / 2
+    # Стоимость одной тренировки (доля одного тренера / его план тренировок)
+    price_per_workout = zp_half / kol_workouts
+    
+    # Разница в пропусках
+    # Если Ахмад пропустил больше, разница положительная (вычитаем у него)
+    # Если Владимир пропустил больше, разница отрицательная (минус на минус даст плюс Ахмаду)
+    diff = k_A - k_V
+    
+    final_A = zp_half - (diff * price_per_workout)
+    final_V = zp_half + (diff * price_per_workout)
+    
+    st.divider()
+    
+    # Вывод результата
+    res_col1, res_col2 = st.columns(2)
+    res_col1.metric("Ахмад", f"{final_A:,.2f} ₽", delta=f"{-diff if diff != 0 else 0} замен")
+    res_col2.metric("Владимир", f"{final_V:,.2f} ₽", delta=f"{diff if diff != 0 else 0} замен")
+    
+    if diff > 0:
+        st.info(f"Владимир подменил Ахмада {diff} раз(а).")
+    elif diff < 0:
+        st.info(f"Ахмад подменил Владимира {abs(diff)} раз(а).")
+    else:
+        st.success("Все тренировки проведены согласно плану 50/50.")
